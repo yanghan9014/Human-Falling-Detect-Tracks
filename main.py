@@ -71,7 +71,9 @@ if __name__ == '__main__':
 
     # Tracker.
     max_age = 30
-    tracker = Tracker(max_age=max_age, n_init=3)
+    # n_init: how many times kalman filter updates before a track is confirmed
+    # max_age: how much time before a track is marked as missed (no association at the current time step)
+    tracker = Tracker(max_age=max_age, n_init=3) 
 
     # Actions Estimate.
     action_model = TSSTG()
@@ -146,7 +148,7 @@ if __name__ == '__main__':
             action = 'pending..'
             clr = (0, 255, 0)
             # Use 30 frames time-steps to prediction.
-            if len(track.keypoints_list) == 30:
+            if len(track.keypoints_list) == 10:
                 pts = np.array(track.keypoints_list, dtype=np.float32)
                 out = action_model.predict(pts, frame.shape[:2])
                 action_name = action_model.class_names[out[0].argmax()]

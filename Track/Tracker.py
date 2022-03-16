@@ -49,6 +49,9 @@ class Detection(object):
         return ret
 
 
+
+# n_init: how many times kalman filter updates before a track is confirmed
+# max_age: how much time before a track is marked as missed (no association at the current time step)
 class Track:
     def __init__(self, mean, covariance, track_id, n_init, max_age=30, buffer=30):
         self.mean = mean
@@ -117,6 +120,8 @@ class Track:
         return self.state == TrackState.Deleted
 
 
+# n_init: how many times kalman filter updates before a track is confirmed
+# max_age: how much time before a track is marked as missed (no association at the current time step)
 class Tracker:
     def __init__(self, max_iou_distance=0.7, max_age=30, n_init=5):
         self.max_iou_dist = max_iou_distance

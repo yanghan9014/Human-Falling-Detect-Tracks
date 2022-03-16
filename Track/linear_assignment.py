@@ -100,7 +100,7 @@ def matching_cascade(distance_metric, max_distance, cascade_depth, tracks, detec
         Gating threshold. Associations with cost larger than this value are
         disregarded.
     cascade_depth: int
-        The cascade depth, should be se to the maximum track age.
+        The cascade depth, should be set to the maximum track age.
     tracks : List[Track]
         A list of predicted tracks at the current time step.
     detections : List[Detection]
