@@ -6,7 +6,7 @@ if __name__ == "__main__":
                         help='Street lamp index')
     par.add_argument('--port', default=0,  # required=True,  # default=2,
                         help='Source of camera or video file path.')
-    par.add_argument('--target_url', type=str, required=True,
+    par.add_argument('--target_url', default='http://10ba-125-227-134-216.ngrok.io/api/fall', type=str, required=True,
                         help='output post url')
                         
     par.add_argument('--detection_input_size', type=int, default=384,
