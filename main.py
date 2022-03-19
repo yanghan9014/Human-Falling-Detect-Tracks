@@ -4,6 +4,7 @@ import time
 import torch
 import argparse
 import numpy as np
+import requests
 
 from Detection.Utils import ResizePadding
 from CameraLoader import CamLoader, CamLoader_Q
@@ -24,7 +25,8 @@ from ActionsEstLoader import TSSTG
 
 # if __name__ == '__main__':
 class Fall_detector:
-    def __init__(self, output_file = ''):
+    def __init__(self, index, output_file = ''):
+        self.index = index
 
         self.par = argparse.ArgumentParser(description='Human Fall Detection Demo.')
         self.par.add_argument('-C', '--camera', default=0,  # required=True,  # default=2,
@@ -142,6 +144,8 @@ class Fall_detector:
             # create a new track if no matched.
             tracker.update(detections)
 
+            fall = False
+            prob = 0.0
             # Predict Actions of each track.
             for i, track in enumerate(tracker.tracks):
                 if not track.is_confirmed():
@@ -166,6 +170,8 @@ class Fall_detector:
                 
                 if action != 'pending..'
                     print(action)
+                    fall = True
+                    prob = max(prob, out[0].max() * 100)     
 
                 # VISUALIZE.
                 if track.time_since_update == 0:
@@ -176,6 +182,9 @@ class Fall_detector:
                                         0.4, (255, 0, 0), 2)
                     frame = cv2.putText(frame, action, (bbox[0] + 5, bbox[1] + 15), cv2.FONT_HERSHEY_COMPLEX,
                                         0.4, clr, 1)
+
+            payload = {'from': self.index, 'probability': prob}
+            r = requests.post('http://10ba-125-227-134-216.ngrok.io/api/fall', data = payload)
 
             # # Show Frame.
             # frame = cv2.resize(frame, (0, 0), fx=2., fy=2.)
