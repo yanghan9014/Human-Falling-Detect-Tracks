@@ -20,8 +20,11 @@ class CamLoader:
         self.stream = cv2.VideoCapture(camera)
         assert self.stream.isOpened(), 'Cannot read camera source!'
         self.fps = self.stream.get(cv2.CAP_PROP_FPS)
-        self.frame_size = (int(self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)),
-                           int(self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+        # self.frame_size = (int(self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)),
+        #                    int(self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+        self.frame_size = (640, 480)
+        self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, self.frame_size[0])
+        self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, self.frame_size[1])
 
         self.stopped = False
         self.ret = False
