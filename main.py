@@ -148,7 +148,7 @@ if __name__ == '__main__':
             action = 'pending..'
             clr = (0, 255, 0)
             # Use 30 frames time-steps to prediction.
-            if len(track.keypoints_list) == 10:
+            if len(track.keypoints_list) == 30:
                 pts = np.array(track.keypoints_list, dtype=np.float32)
                 out = action_model.predict(pts, frame.shape[:2])
                 action_name = action_model.class_names[out[0].argmax()]
