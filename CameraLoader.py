@@ -16,8 +16,11 @@ class CamLoader:
         camera: (int, str) Source of camera or video.,
         preprocess: (Callable function) to process the frame before return.
     """
-    def __init__(self, camera, preprocess=None, ori_return=False):
-        self.stream = cv2.VideoCapture(camera)
+    def __init__(self, camera, preprocess=None, ori_return=False, stream=False):
+        if stream:
+            self.stream = cv2.VideoCapture(camera, cv2.CAP_FFMPEG)
+        else:
+            self.stream = cv2.VideoCapture(camera)
         assert self.stream.isOpened(), 'Cannot read camera source!'
         self.fps = self.stream.get(cv2.CAP_PROP_FPS)
         self.frame_size = (int(self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)),

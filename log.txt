@@ -1,0 +1,261 @@
+Namespace(camera='fall-01-cam0.mp4', detection_input_size=384, pose_input_size='224x160', pose_backbone='resnet50', show_detected=False, show_skeleton=True, save_out='', device='cuda')
+Loading pose model from ./Models/sppe/fast_res50_256x192.pth
+Walking: 49.61%
+Walking: 49.77%
+Walking: 54.60%
+Walking: 48.86%
+Walking: 46.91%
+Walking: 46.11%
+Walking: 46.91%
+Walking: 40.99%
+Walking: 33.94%
+Walking: 34.97%
+Walking: 34.93%
+Walking: 35.30%
+Walking: 34.77%
+Walking: 35.92%
+Walking: 35.78%
+Standing: 35.85%
+Walking: 33.27%
+Walking: 34.43%
+Standing: 33.80%
+Standing: 38.77%
+Standing: 37.64%
+Walking: 37.12%
+Walking: 37.61%
+Walking: 39.06%
+Walking: 42.39%
+Walking: 44.31%
+Walking: 51.80%
+Walking: 58.74%
+Walking: 59.39%
+Walking: 58.60%
+Walking: 62.30%
+Walking: 62.08%
+Walking: 63.53%
+Walking: 63.54%
+Walking: 65.68%
+Walking: 65.15%
+Walking: 68.05%
+Walking: 67.28%
+Walking: 67.87%
+Walking: 66.87%
+Walking: 69.52%
+Walking: 68.70%
+Walking: 70.89%
+Walking: 66.95%
+Walking: 67.27%
+Walking: 65.43%
+Walking: 64.30%
+Walking: 61.77%
+Walking: 56.56%
+Walking: 52.59%
+Walking: 56.67%
+Walking: 52.94%
+Walking: 49.50%
+Walking: 47.98%
+Walking: 48.20%
+Walking: 52.05%
+Walking: 46.59%
+Walking: 51.31%
+Walking: 42.81%
+Walking: 51.22%
+Walking: 44.96%
+Walking: 52.56%
+Standing: 47.53%
+Walking: 58.53%
+Standing: 47.24%
+Walking: 57.92%
+Standing: 44.62%
+Walking: 58.80%
+Standing: 43.64%
+Walking: 59.72%
+Standing: 44.29%
+Walking: 60.74%
+Walking: 47.11%
+Walking: 60.69%
+Walking: 42.77%
+Walking: 59.23%
+Walking: 46.47%
+Walking: 60.88%
+Walking: 44.15%
+Walking: 58.34%
+Walking: 43.35%
+Walking: 56.44%
+Walking: 36.61%
+Walking: 54.96%
+Walking: 44.39%
+Walking: 56.33%
+Walking: 41.30%
+Walking: 53.80%
+Walking: 42.57%
+Walking: 52.09%
+Walking: 37.63%
+Walking: 47.22%
+Walking: 38.03%
+Walking: 44.42%
+Walking: 35.27%
+Walking: 39.08%
+Walking: 32.75%
+Walking: 39.08%
+Walking: 32.73%
+Walking: 39.08%
+Walking: 35.32%
+Walking: 36.94%
+Lying Down: 3.54%
+Walking: 34.57%
+Walking: 36.94%
+Lying Down: 4.48%
+Walking: 30.47%
+Walking: 32.94%
+Lying Down: 5.89%
+Walking: 30.02%
+Walking: 32.94%
+Lying Down: 6.64%
+Fall Down: 29.56%
+Walking: 32.94%
+Lying Down: 6.98%
+Fall Down: 32.35%
+Walking: 32.94%
+Fall Down: 6.06%
+Fall Down: 38.55%
+Walking: 24.44%
+Lying Down: 6.34%
+Fall Down: 42.66%
+Walking: 24.44%
+Lying Down: 5.42%
+Fall Down: 46.56%
+Walking: 24.44%
+Lying Down: 5.42%
+Fall Down: 47.13%
+Fall Down: 21.44%
+Fall Down: 6.61%
+Fall Down: 47.86%
+Fall Down: 21.44%
+Lying Down: 5.71%
+Fall Down: 46.33%
+Fall Down: 21.44%
+Lying Down: 6.32%
+Fall Down: 47.29%
+Fall Down: 19.63%
+Fall Down: 7.20%
+Fall Down: 47.28%
+Fall Down: 19.29%
+Fall Down: 8.47%
+Fall Down: 46.99%
+Fall Down: 19.29%
+Fall Down: 8.26%
+Fall Down: 44.12%
+Fall Down: 19.29%
+Fall Down: 9.21%
+Fall Down: 41.58%
+Fall Down: 20.37%
+Fall Down: 10.48%
+Fall Down: 41.33%
+Fall Down: 20.37%
+Fall Down: 9.92%
+Fall Down: 38.43%
+Fall Down: 20.37%
+Fall Down: 9.92%
+Fall Down: 37.29%
+Fall Down: 20.37%
+Fall Down: 11.62%
+Fall Down: 37.67%
+Fall Down: 20.37%
+Fall Down: 11.84%
+Fall Down: 36.48%
+Fall Down: 20.37%
+Fall Down: 12.30%
+Fall Down: 33.34%
+Fall Down: 20.37%
+Fall Down: 12.30%
+Fall Down: 33.43%
+Fall Down: 20.37%
+Fall Down: 12.30%
+Fall Down: 32.68%
+Fall Down: 20.37%
+Fall Down: 12.30%
+Fall Down: 31.14%
+Fall Down: 20.37%
+Fall Down: 12.30%
+Fall Down: 29.95%
+Fall Down: 20.37%
+Fall Down: 12.30%
+Fall Down: 30.08%
+Fall Down: 20.37%
+Fall Down: 12.30%
+Fall Down: 30.81%
+Fall Down: 20.37%
+Fall Down: 12.30%
+Fall Down: 28.97%
+Fall Down: 20.37%
+Fall Down: 12.30%
+Fall Down: 28.97%
+Fall Down: 20.37%
+Fall Down: 13.47%
+Fall Down: 26.42%
+Fall Down: 22.23%
+Fall Down: 15.08%
+Fall Down: 25.04%
+Fall Down: 22.23%
+Fall Down: 15.08%
+Fall Down: 23.60%
+Fall Down: 22.23%
+Fall Down: 14.05%
+Fall Down: 22.75%
+Fall Down: 22.23%
+Fall Down: 14.05%
+Fall Down: 19.35%
+Fall Down: 22.23%
+Fall Down: 14.05%
+Fall Down: 19.99%
+Fall Down: 22.23%
+Fall Down: 14.48%
+Fall Down: 18.78%
+Fall Down: 23.61%
+Fall Down: 14.77%
+Fall Down: 18.14%
+Fall Down: 23.61%
+Fall Down: 14.77%
+Fall Down: 18.17%
+Fall Down: 23.61%
+Fall Down: 14.64%
+Fall Down: 17.27%
+Fall Down: 26.39%
+Fall Down: 14.64%
+Fall Down: 16.73%
+Fall Down: 25.96%
+Fall Down: 12.44%
+Fall Down: 16.57%
+Fall Down: 25.96%
+Fall Down: 12.44%
+Fall Down: 15.29%
+Fall Down: 27.15%
+Fall Down: 11.35%
+Fall Down: 14.94%
+Fall Down: 29.56%
+Fall Down: 10.49%
+Fall Down: 13.12%
+Fall Down: 29.56%
+Fall Down: 10.49%
+Fall Down: 14.40%
+Fall Down: 27.56%
+Fall Down: 9.02%
+Fall Down: 12.22%
+Fall Down: 27.15%
+Fall Down: 9.02%
+Fall Down: 12.52%
+Fall Down: 25.22%
+Fall Down: 9.37%
+Fall Down: 10.96%
+Fall Down: 29.49%
+Fall Down: 7.65%
+Fall Down: 11.10%
+Fall Down: 27.82%
+Fall Down: 7.65%
+Fall Down: 10.30%
+Fall Down: 27.98%
+Fall Down: 7.65%
+Fall Down: 11.73%
+Fall Down: 25.10%
+Fall Down: 7.65%

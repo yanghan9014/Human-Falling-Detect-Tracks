@@ -1,4 +1,6 @@
+from email import header
 from json import detect_encoding
+import json
 import os
 import cv2
 import time
@@ -63,121 +65,127 @@ class Fall_detector:
         self.action_model = TSSTG()
 
     def detect(self):
-        if type(self.args.camera) is str and os.path.isfile(self.args.camera):
-            # Use loader thread with Q for video file.
-            cam = CamLoader_Q(self.args.camera, queue_size=1000, preprocess=self.preproc).start()
-        else:
-            # Use normal thread loader for webcam or live stream.
-            cam = CamLoader(int(self.args.camera) if self.args.camera.isdigit() else self.args.camera,
-                            preprocess=self.preproc).start()
 
+        # Use normal thread loader for webcam or live stream.
+        cam = CamLoader(self.args.source_url, preprocess=self.preproc, stream=True).start()
         #frame_size = cam.frame_size
         #scf = torch.min(inp_size / torch.FloatTensor([frame_size]), 1)[0]
+
 
         outvid = False
         if self.args.save_out != '':
             outvid = True
-            codec = cv2.VideoWriter_fourcc(*'MJPG')
+            codec = cv2.VideoWriter_fourcc(*'mp4v')
             writer = cv2.VideoWriter(self.args.save_out, codec, 30, (self.args.detection_input_size * 2, self.args.detection_input_size * 2))
+        
 
         fps_time = 0
         f = 0
-        while cam.grabbed():
-            f += 1
-            frame = cam.getitem()
-            image = frame.copy()
+        try:
+            while cam.grabbed():
+                f += 1
+                frame = cam.getitem()
+                image = frame.copy()
 
-            # Detect humans bbox in the frame with detector model.
-            detected = self.detect_model.detect(frame, need_resize=False, expand_bb=10)
+                # Detect humans bbox in the frame with detector model.
+                detected = self.detect_model.detect(frame, need_resize=False, expand_bb=10)
 
-            # Predict each tracks bbox of current frame from previous frames information with Kalman filter.
-            self.tracker.predict()
-            # Merge two source of predicted bbox together.
-            for track in self.tracker.tracks:
-                det = torch.tensor([track.to_tlbr().tolist() + [0.5, 1.0, 0.0]], dtype=torch.float32)
-                detected = torch.cat([detected, det], dim=0) if detected is not None else det
+                # Predict each tracks bbox of current frame from previous frames information with Kalman filter.
+                self.tracker.predict()
+                # Merge two source of predicted bbox together.
+                for track in self.tracker.tracks:
+                    det = torch.tensor([track.to_tlbr().tolist() + [0.5, 1.0, 0.0]], dtype=torch.float32)
+                    detected = torch.cat([detected, det], dim=0) if detected is not None else det
 
-            detections = []  # List of Detections object for tracking.
-            if detected is not None:
-                #detected = non_max_suppression(detected[None, :], 0.45, 0.2)[0]
-                # Predict skeleton pose of each bboxs.
-                poses = self.pose_model.predict(frame, detected[:, 0:4], detected[:, 4])
+                detections = []  # List of Detections object for tracking.
+                if detected is not None:
+                    #detected = non_max_suppression(detected[None, :], 0.45, 0.2)[0]
+                    # Predict skeleton pose of each bboxs.
+                    poses = self.pose_model.predict(frame, detected[:, 0:4], detected[:, 4])
 
-                # Create Detections object.
-                detections = [Detection(self.kpt2bbox(ps['keypoints'].numpy()),
-                                        np.concatenate((ps['keypoints'].numpy(),
-                                                        ps['kp_score'].numpy()), axis=1),
-                                        ps['kp_score'].mean().numpy()) for ps in poses]
+                    # Create Detections object.
+                    detections = [Detection(self.kpt2bbox(ps['keypoints'].numpy()),
+                                            np.concatenate((ps['keypoints'].numpy(),
+                                                            ps['kp_score'].numpy()), axis=1),
+                                            ps['kp_score'].mean().numpy()) for ps in poses]
 
-                # VISUALIZE.
-                if self.args.show_detected:
-                    for bb in detected[:, 0:5]:
-                        frame = cv2.rectangle(frame, (bb[0], bb[1]), (bb[2], bb[3]), (0, 0, 255), 1)
+                    # VISUALIZE.
+                    if self.args.show_detected:
+                        for bb in detected[:, 0:5]:
+                            frame = cv2.rectangle(frame, (bb[0], bb[1]), (bb[2], bb[3]), (0, 0, 255), 1)
 
-            # Update tracks by matching each track information of current and previous frame or
-            # create a new track if no matched.
-            self.tracker.update(detections)
+                # Update tracks by matching each track information of current and previous frame or
+                # create a new track if no matched.
+                self.tracker.update(detections)
 
-            fall = False
-            prob = 0.0
-            # Predict Actions of each track.
-            for i, track in enumerate(self.tracker.tracks):
-                if not track.is_confirmed():
-                    continue
+                fall = False
+                prob = 0.0
+                # Predict Actions of each track.
+                for i, track in enumerate(self.tracker.tracks):
+                    print(len(self.tracker.tracks))
+                    if not track.is_confirmed():
+                        continue
 
-                track_id = track.track_id
-                bbox = track.to_tlbr().astype(int)
-                center = track.get_center().astype(int)
+                    track_id = track.track_id
+                    bbox = track.to_tlbr().astype(int)
+                    center = track.get_center().astype(int)
 
-                action = 'pending..'
-                clr = (0, 255, 0)
-                # Use 30 frames time-steps to prediction.
-                if len(track.keypoints_list) == 30:
-                    pts = np.array(track.keypoints_list, dtype=np.float32)
-                    out = self.action_model.predict(pts, frame.shape[:2])
-                    action_name = self.action_model.class_names[out[0].argmax()]
-                    action = '{}: {:.2f}%'.format(action_name, out[0].max() * 100)
-                    if action_name == 'Fall Down':
-                        clr = (255, 0, 0)
-                    elif action_name == 'Lying Down':
-                        clr = (255, 200, 0)
+                    action = 'pending..'
+                    clr = (0, 255, 0)
+                    # Use 30 frames time-steps to prediction.
+                    if len(track.keypoints_list) == 30:
+                        pts = np.array(track.keypoints_list, dtype=np.float32)
+                        out = self.action_model.predict(pts, frame.shape[:2])
+                        action_name = self.action_model.class_names[out[0].argmax()]
+                        action = '{}: {:.2f}%'.format(action_name, out[0].max() * 100)
+                        if action_name == 'Fall Down':
+                            clr = (255, 0, 0)
+                        elif action_name == 'Lying Down':
+                            clr = (255, 200, 0)
+                    
+                    if action != 'pending..':
+                        fall = True
+                        prob = max(prob, out[0].max() * 100)
+                    
+                        if action_name == 'Fall Down' and prob > 25:
+                            payload = json.dumps({'from': self.args.index, 'probability': prob/100})
+                            headers = { 'Content-Type': 'application/json'}
+                            # r = requests.post('http://10ba-125-227-134-216.ngrok.io/api/fall', data=payload)
+                            r = requests.post(self.args.target_url, data=payload, headers=headers)  
+    
+                    print(i, action)
+                    # VISUALIZE.
+                    if track.time_since_update == 0:
+                        if self.args.show_skeleton:
+                            frame = draw_single(frame, track.keypoints_list[-1])
+                        frame = cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 1)
+                        frame = cv2.putText(frame, str(track_id), (center[0], center[1]), cv2.FONT_HERSHEY_COMPLEX,
+                                            0.4, (255, 0, 0), 2)
+                        frame = cv2.putText(frame, action, (bbox[0] + 5, bbox[1] + 15), cv2.FONT_HERSHEY_COMPLEX,
+                                            0.4, clr, 1)
+
                 
-                if action != 'pending..':
-                    print(action)
-                    fall = True
-                    prob = max(prob, out[0].max() * 100)     
 
-                # VISUALIZE.
-                if track.time_since_update == 0:
-                    if self.args.show_skeleton:
-                        frame = draw_single(frame, track.keypoints_list[-1])
-                    frame = cv2.rectangle(frame, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 1)
-                    frame = cv2.putText(frame, str(track_id), (center[0], center[1]), cv2.FONT_HERSHEY_COMPLEX,
-                                        0.4, (255, 0, 0), 2)
-                    frame = cv2.putText(frame, action, (bbox[0] + 5, bbox[1] + 15), cv2.FONT_HERSHEY_COMPLEX,
-                                        0.4, clr, 1)
+                # Show Frame.
+                frame = cv2.resize(frame, (0, 0), fx=2., fy=2.)
+                frame = cv2.putText(frame, '%d, FPS: %f' % (f, 1.0 / (time.time() - fps_time)),
+                                    (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
+                frame = frame[:, :, ::-1]
+                fps_time = time.time()
 
-            payload = {'from': self.args.index, 'probability': prob}
-            # r = requests.post('http://10ba-125-227-134-216.ngrok.io/api/fall', data=payload)
-            r = requests.post(target_url, data=payload)
+                if outvid:
+                    writer.write(frame)
 
-            # # Show Frame.
-            # frame = cv2.resize(frame, (0, 0), fx=2., fy=2.)
-            # frame = cv2.putText(frame, '%d, FPS: %f' % (f, 1.0 / (time.time() - fps_time)),
-            #                     (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
-            # frame = frame[:, :, ::-1]
-            # fps_time = time.time()
+                # cv2.imshow('frame', frame)
+                # if cv2.waitKey(1) & 0xFF == ord('q'):
+                #     break
+        except KeyboardInterrupt:
+            print("Finish detecting")
+        finally:
+            # Clear resource.
+            cam.stop()
+            if outvid:
+                writer.release()
+            # cv2.destroyAllWindows()
 
-            # if outvid:
-            #     writer.write(frame)
-
-            # cv2.imshow('frame', frame)
-            # if cv2.waitKey(1) & 0xFF == ord('q'):
-            #     break
-
-        # Clear resource.
-        cam.stop()
-        if outvid:
-            writer.release()
-        # cv2.destroyAllWindows()
 
